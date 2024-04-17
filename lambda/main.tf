@@ -21,6 +21,7 @@ resource "aws_lambda_function" "this" {
   filename                       = data.archive_file.this.output_path
   source_code_hash               = data.archive_file.this.output_base64sha256
   role                           = var.execution_role_arn
+  layers                         = var.layer_arns
   runtime                        = "python3.12"
   handler                        = "lambda_function.lambda_handler"
   reserved_concurrent_executions = var.lambda_reserved_concurrency

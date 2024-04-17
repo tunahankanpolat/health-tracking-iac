@@ -13,3 +13,13 @@ variable "lambda_reserved_concurrency" {
   description = "The amount of reserved concurrent executions for this lambda function"
   default     = -1
 }
+
+variable "layer_arns" {
+  type        = list(string)
+  description = "ARNs for Lambda Layers"
+}
+
+variable "schedule_expression" {
+  type    = string
+  default = ""
+}

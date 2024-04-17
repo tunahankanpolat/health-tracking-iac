@@ -3,7 +3,7 @@ import boto3
 
 def lambda_handler(event, context):
     # Gelen request'ten mac_address değerini alın
-    print(event);
+    print(event)
     body = json.loads(event['body'])
     mac_address = body.get('mac_address')
     print("mac_address", mac_address)
