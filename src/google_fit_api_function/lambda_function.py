@@ -71,6 +71,7 @@ def put_item_to_health_data_table(user_id, data):
     with table.batch_writer() as batch:
         for item in data:
             timestamp = int(item['timestamp'])  # Convert timestamp to number
+            timestamp = convert_nanoseconds_to_milliseconds(timestamp)
             del item['timestamp']
             entry_id = str(uuid.uuid4()) 
             batch.put_item(
@@ -82,6 +83,10 @@ def put_item_to_health_data_table(user_id, data):
                 }
             )
     return
+
+def convert_nanoseconds_to_milliseconds(timestamp):
+    milliseconds = timestamp // 1000000
+    return milliseconds
 
 
 def get_user_health_data_from_dynamodb(user_id, start_time=None, end_time=None):
