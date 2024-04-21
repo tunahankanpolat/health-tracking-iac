@@ -3,8 +3,7 @@ import boto3
 import datetime
 from decimal import Decimal
 
-def get_user_health_data_from_dynamodb(user_id, start_time="0", end_time=int(datetime.datetime.now().timestamp())):
-    end_time = end_time * 1000
+def get_user_health_data_from_dynamodb(user_id, start_time=0, end_time=int(datetime.datetime.now().timestamp())):
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table('user_health_data')    
     response = table.query(
@@ -30,11 +29,23 @@ def convert_heart_rate_from_decimal_to_int(obj):
         return obj
         
 def lambda_handler(event, context):
-    print('Event: ', event)
-    user_id = event['user_id']
-    start_time = event.get('start_date')
-    end_time = event.get('end_date')
+    body = json.loads(event['body'])
+    print('Body: ', body)
+    user_id = body.get('user_id')
+    start_time = body.get('start_date')
+    end_time = body.get('end_date')
+    
+    if not start_time:
+        start_time = 0
+    if not end_time:
+        end_time = int(datetime.datetime.now().timestamp())*1000
+        
     health_data = []
+    if not user_id:
+        return {
+            'statusCode': 400,
+            'body': json.dumps('User ID is required')
+        }
     
     if start_time and end_time:
         start_time = datetime.datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S')
