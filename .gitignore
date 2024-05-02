@@ -34,4 +34,6 @@ override.tf.json
 terraform.rc
 terraform.exe
 .terraform.lock.hcl
-build
+
+# Ignore build folder
+build/
