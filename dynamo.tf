@@ -6,8 +6,8 @@ resource "aws_dynamodb_table" "rfid_tag" {
     name = "mac_address"
     type = "S"
   }
-  read_capacity  = 10
-  write_capacity = 10
+  read_capacity  = 1
+  write_capacity = 1
 }
 
 resource "aws_dynamodb_table" "lock_log" {
@@ -18,8 +18,8 @@ resource "aws_dynamodb_table" "lock_log" {
     name = "mac_address"
     type = "S"
   }
-  read_capacity  = 10
-  write_capacity = 10
+  read_capacity  = 1
+  write_capacity = 1
 }
 
 resource "aws_dynamodb_table" "user" {
@@ -30,8 +30,8 @@ resource "aws_dynamodb_table" "user" {
     name = "user_id"
     type = "N"
   }
-  read_capacity  = 10
-  write_capacity = 10
+  read_capacity  = 1
+  write_capacity = 1
 }
 
 
@@ -54,15 +54,15 @@ resource "aws_dynamodb_table" "user_health_data" {
     type = "N"
   }
 
-  read_capacity  = 10
-  write_capacity = 10
+  read_capacity  = 1
+  write_capacity = 1
 
   global_secondary_index {
     hash_key           = "user_id"
     range_key          = "time_stamp"  # Added as sort key
     name               = "user_id_timestamp_index"
     projection_type    = "ALL"
-    read_capacity      = 10
-    write_capacity     = 10
+    read_capacity      = 1
+    write_capacity     = 1
   }
 }
