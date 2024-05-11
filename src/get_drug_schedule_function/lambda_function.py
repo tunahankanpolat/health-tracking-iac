@@ -12,10 +12,11 @@ def lambda_handler(event, context):
                 'mac_address': mac_address
             }
         )
-        rfid_tag = response['Item']['rfid_tag']
+        drug_schedule = response['Item']['drug_schedule']
+        print("drug_schedule", drug_schedule)
         return {
             'statusCode': 200,
-            'body': rfid_tag
+            'body': drug_schedule
         }
     except Exception as e:
         return {

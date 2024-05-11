@@ -1,13 +1,27 @@
-resource "aws_dynamodb_table" "rfid_tag" {
-  name = "rfid_tag"
+resource "aws_dynamodb_table" "drug_box" {
+  name = "drug_box"
   hash_key = "mac_address"
     
   attribute {
     name = "mac_address"
     type = "S"
   }
+
+  attribute {
+    name = "user_id"
+    type = "N"
+  }
+
   read_capacity  = 1
   write_capacity = 1
+
+  global_secondary_index {
+    hash_key           = "user_id"
+    name               = "user_id_index"
+    projection_type    = "ALL"
+    read_capacity      = 1
+    write_capacity     = 1
+  }
 }
 
 resource "aws_dynamodb_table" "lock_log" {

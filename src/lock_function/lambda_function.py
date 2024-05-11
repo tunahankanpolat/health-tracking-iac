@@ -11,7 +11,7 @@ def lambda_handler(event, context):
     dynamodb = boto3.resource('dynamodb')
     
     # Tabloyu seçin
-    table = dynamodb.Table('rfid_tag')
+    table = dynamodb.Table('drug_box')
     
     try:
         # Mac adresine göre veriyi alın
