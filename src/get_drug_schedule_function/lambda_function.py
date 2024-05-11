@@ -13,13 +13,24 @@ def lambda_handler(event, context):
             }
         )
         drug_schedule = response['Item']['drug_schedule']
-        print("drug_schedule", drug_schedule)
+        formatted_schedule = format_schedule(drug_schedule)
+        print("formatted_schedule", formatted_schedule)
         return {
             'statusCode': 200,
-            'body': drug_schedule
+            'body': json.dumps(formatted_schedule, separators=(',', ':'))  # Boşluk olmadan JSON dönmek için
         }
     except Exception as e:
         return {
             'statusCode': 500,
             'body': str(e)
         }
+
+def format_schedule(drug_schedule):
+    result = {}
+    for id, meds in drug_schedule.items():
+        times_list = []
+        for med in meds:
+            for key, value in med.items():
+                times_list.extend(value)
+        result[id] = times_list
+    return result
