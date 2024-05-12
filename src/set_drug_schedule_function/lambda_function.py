@@ -1,10 +1,13 @@
 import json
 import boto3
+from boto3.dynamodb.conditions import Key
 
 def lambda_handler(event, context):
       body = json.loads(event['body'])
       user_id = body.get('user_id')
       drug_schedule = body.get('drug_schedule')
+      print("user_id: ", user_id)
+      print("drug_schedule: ", drug_schedule)
       dynamodb = boto3.resource('dynamodb')
       table = dynamodb.Table('drug_box')
       try:
@@ -20,26 +23,29 @@ def lambda_handler(event, context):
                   }
             set_drug_schedule(user_id, drug_schedule, dynamodb, table)
       except Exception as e:
+            print("e: ", e)
             return {
                   'statusCode': 500,
                   'body': str(e)
             }
 
-def set_drug_schedule(user_id, drug_schedule, dynamodb=None, table=None):
+def set_drug_schedule(user_id, drug_schedule, dynamodb, table):
       try:
-            r_drug_schedule = get_drug_schedule_from_dynamodb(user_id, dynamodb, table)
-            if not r_drug_schedule:
+            drug_box = get_drug_box_from_dynamodb(user_id, dynamodb, table)
+            if not drug_box:
                   return {
                   'statusCode': 404,
                   'body': json.dumps('User ID not found')
                   }
-            print("r_drug_schedule: ", r_drug_schedule)
+            print("drug_box: ", drug_box)
+            print("mac_address: ", drug_box['mac_address'])
             response = table.update_item(
-                  Key={'user_id': user_id},
+                  Key={'mac_address': drug_box['mac_address']},
                   UpdateExpression='SET drug_schedule = :new_schedule',
                   ExpressionAttributeValues={':new_schedule': drug_schedule},
                   ReturnValues='UPDATED_NEW'
             )
+            print("response: ", response)
             # Check if the update was successful
             if response.get('Attributes'):
                   return {
@@ -52,13 +58,14 @@ def set_drug_schedule(user_id, drug_schedule, dynamodb=None, table=None):
                   'body': json.dumps('User ID not found')
                   }
       except Exception as e:
+            print("e: ", e)
             return {
                   'statusCode': 500,
                   'body': str(e)
             }
     
     
-def get_drug_schedule_from_dynamodb(user_id, dynamodb=None, table=None):
+def get_drug_box_from_dynamodb(user_id, dynamodb=None, table=None):
     response = table.query(
         IndexName='user_id_index',
         KeyConditionExpression='user_id = :id',
@@ -66,8 +73,8 @@ def get_drug_schedule_from_dynamodb(user_id, dynamodb=None, table=None):
             ':id': int(user_id),
         }
     )
-    items = response['Items']["drug_schedule"]
-    return items
+    print("response['Items']", response['Items'])
+    return response['Items'][0]
     
     
 def format_schedule(drug_schedule):
